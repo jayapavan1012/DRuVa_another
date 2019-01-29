@@ -5,12 +5,13 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/barcode_icon_2_png"
+        android:icon="@drawable/druva"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme">
@@ -32,6 +33,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.nextinnovation.pt.barcodescanner.activity.MainActivity" />
         </activity>
+        <activity
+            android:name="com.nextinnovation.pt.barcodescanner.activity.CameraActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
+            android:name="com.nextinnovation.pt.barcodescanner.activity.Camera2Activity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize" />
         <!-- For Fabric Crash Analytics -->
         <meta-data
             android:name="io.fabric.ApiKey"

@@ -4,21 +4,6 @@
     <item
         android:id="@+id/item_share"
         android:orderInCategory="100"
-        android:title="@string/share"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/item_rate_app"
-        android:orderInCategory="100"
-        android:title="@string/rate_app"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/item_submit_bug"
-        android:orderInCategory="100"
-        android:title="@string/bug"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/item_license"
-        android:orderInCategory="100"
-        android:title="@string/license"
+        android:title="@string/server"
         app:showAsAction="never" />
 </menu>
