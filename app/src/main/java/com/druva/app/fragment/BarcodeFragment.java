@@ -79,8 +79,10 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener {
     }
 
 
+
     public interface  ScanRequest{
-        void scanBarcode();
+            void scanBarcode ();
+
     }
 
 }

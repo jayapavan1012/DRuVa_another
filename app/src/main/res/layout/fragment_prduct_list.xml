@@ -11,14 +11,14 @@
        android:layout_width="match_parent"
        android:layout_height="match_parent">
        <TextView
-           android:id="@+id/text"
+           android:id="@+id/pjText"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:gravity="center"
            android:text="@string/swipe" />
        <android.support.v4.widget.SwipeRefreshLayout
            android:id="@+id/swipe_refresh_layout"
-           android:layout_below="@+id/text"
+           android:layout_below="@+id/pjText"
            android:background="#d6dfdfdf"
            android:layout_width="match_parent"
            android:layout_height="wrap_content">

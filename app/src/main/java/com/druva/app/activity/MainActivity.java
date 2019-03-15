@@ -1,9 +1,13 @@
 package com.druva.app.activity;
 
+import com.google.android.gms.vision.Tracker;
+import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScanner;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -21,6 +25,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScanner;
+import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScannerActivity;
 import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScannerBuilder;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.nextinnovation.pt.barcodescanner.R;
@@ -31,6 +36,7 @@ import com.druva.app.utils.ImageSaver;
 import com.druva.app.utils.Utils;
 
 import org.apache.commons.io.IOUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.mock.web.MockMultipartFile;
@@ -50,6 +56,12 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements BarcodeFragment.ScanRequest, CameraFragment.CaptureRequest {
 
+
+    MainActivity ma=this;
+    Barcode bar;
+    int count=0;
+    MaterialBarcodeScannerBuilder pj;
+  //  MaterialBarcodeScanner pjmat;
     private Context context;
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -73,6 +85,12 @@ public class MainActivity extends AppCompatActivity implements BarcodeFragment.S
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        databasehelper db =new databasehelper(this);
+        String s;
+        s=db.getProduct();
+        if(s.equals("") || s=="false") {
+            startSettingsActivity();
+        }
         setContentView(R.layout.activity_main);
         context = this;
         toolbar = findViewById(R.id.toolbar);
@@ -112,9 +130,24 @@ public class MainActivity extends AppCompatActivity implements BarcodeFragment.S
     @Override
     public void scanBarcode() {
         /** This method will listen the button clicked passed form the fragment **/
-        checkBarcodePermission();
+
+                checkBarcodePermission();
+
+
     }
 
+    public void onNewItem(int id, Barcode item) {
+        bar=item;
+    }
+
+  /*  public void onResult(Barcode barcode) {
+        barcodeResult = barcode;
+        try {
+            sendBarCodeData(barcodeResult.rawValue);
+        } catch (JSONException e) {
+            Utils.showDialog(e.getMessage(), MainActivity.this);
+        }
+    }*/
     @Override
     public void captureRequest() {
 
@@ -163,26 +196,13 @@ public class MainActivity extends AppCompatActivity implements BarcodeFragment.S
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        switch (id) {
-            case R.id.item_share:
-                //openShare();
-                break;
-//            case R.id.item_rate_app:
-//                openRate();
-//                break ;
-//            case R.id.item_submit_bug:
-//                openSubmitBug();
-//                break ;
-//            case R.id.item_license:
-//                openLisence();
-//                break;
+        if (id == R.id.item_share) {
+            //setContentView(R.layout.menu_click);
+            startSettingsActivity();
+            return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-
-
-
 
     @Override
     public void onBackPressed() {
@@ -206,26 +226,32 @@ public class MainActivity extends AppCompatActivity implements BarcodeFragment.S
         /**
          * Build a new MaterialBarcodeScanner
          */
-        final MaterialBarcodeScanner materialBarcodeScanner = new MaterialBarcodeScannerBuilder()
-                .withActivity(MainActivity.this)
-                .withEnableAutoFocus(true)
-                .withBleepEnabled(true)
-                .withBackfacingCamera()
-                .withCenterTracker()
-                .withText("Scanning...")
-                .withResultListener(new MaterialBarcodeScanner.OnResultListener() {
-                    @Override
-                    public void onResult(Barcode barcode) {
-                        barcodeResult = barcode;
-                        try {
-                            sendBarCodeData(barcodeResult.rawValue);
-                        } catch (JSONException e) {
-                            Utils.showDialog(e.getMessage(), MainActivity.this);
+/*            MaterialBarcodeScanner materialBarcodeScanner = new MaterialBarcodeScannerBuilder()
+                    .withActivity(MainActivity.this)
+                    .withEnableAutoFocus(true)
+                    .withBleepEnabled(false)
+                    .withBackfacingCamera()
+                    .withCenterTracker()
+                    .withText("Scanning...")
+                    .withResultListener(new MaterialBarcodeScanner.OnResultListener() {
+                        @Override
+                        public void onResult(Barcode barcode) {
+                            barcodeResult = barcode;
+                            try {
+                                sendBarCodeData(barcodeResult.rawValue);
+
+                            } catch (JSONException e) {
+                                Utils.showDialog(e.getMessage(), MainActivity.this);
+                            }
+                            checkBarcodePermission();
+                            //pjmat.onBarcodeScannerResult(barcode);
                         }
-                    }
-                })
-                .build();
-        materialBarcodeScanner.startScan();
+                    })
+                    .build();
+            materialBarcodeScanner.startScan();
+            pjmat = materialBarcodeScanner;
+            return pjmat;*/
+        startTempActivity();
     }
 
     @Override
@@ -254,8 +280,9 @@ public class MainActivity extends AppCompatActivity implements BarcodeFragment.S
         void itemUpdated();
     }
 
+
     private void sendBarCodeData(String data) throws JSONException {
-          JSONObject json = new JSONObject();
+        JSONObject json = new JSONObject();
         String[] arr = data.split("\\*");
 
         for(String pair:arr){
@@ -272,7 +299,16 @@ public class MainActivity extends AppCompatActivity implements BarcodeFragment.S
         } catch (IOException e) {
             Utils.showDialog(e.getMessage(), MainActivity.this);
         }
-
+        //write code for continuing here.
+       /* try
+        {
+            Thread.sleep(1000);
+        }
+        catch(InterruptedException ex)
+        {
+            Thread.currentThread().interrupt();
+        }
+        */
     }
 
 
@@ -334,4 +370,21 @@ public class MainActivity extends AppCompatActivity implements BarcodeFragment.S
         }
         return true;
     }
+    //onclick listener for menu..
+    public void goBack(View view){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    private void startSettingsActivity() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+
+    }
+    public void startTempActivity(){
+        Intent intent=new Intent(ma,temp.class);
+        startActivity(intent);
+    }
+
+
 }
